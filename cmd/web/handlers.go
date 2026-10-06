@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -20,23 +19,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./assets/html/base.tmpl",
-		"./assets/html/partials/nav.tmpl",
-		"./assets/html/pages/home.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
 	data := templateData{
 		Snippets: snippets,
 	}
 
-	err = ts.ExecuteTemplate(w, "base", data)
+	err = app.render(w, r, http.StatusOK, "home.tmpl", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
@@ -60,23 +47,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	files := []string{
-		"./assets/html/base.tmpl",
-		"./assets/html/partials/nav.tmpl",
-		"./assets/html/pages/view.tmpl",
-	}
-
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
 	data := templateData{
 		Snippet: snippet,
 	}
 
-	err = ts.ExecuteTemplate(w, "base", data)
+	err = app.render(w, r, http.StatusOK, "view.tmpl", data)
 	if err != nil {
 		app.serverError(w, r, err)
 	}
