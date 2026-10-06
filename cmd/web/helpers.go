@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 )
@@ -24,7 +25,15 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 		return fmt.Errorf("the template %s does not exist in the cache", page)
 	}
 
+	buf := new(bytes.Buffer)
+
+	err := ts.ExecuteTemplate(buf, "base", data)
+	if err != nil {
+		return err
+	}
+
 	w.WriteHeader(status)
 
-	return ts.ExecuteTemplate(w, "base", data)
+	_, err = buf.WriteTo(w)
+	return err
 }
